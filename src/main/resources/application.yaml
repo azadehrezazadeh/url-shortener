@@ -1,0 +1,51 @@
+server:
+  port: 8081
+
+logging:
+  level:
+    root: info
+
+spring:
+  application:
+    name: url-shortener
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: myClient
+            authorization-grant-type: authorization_code
+            scope:
+              - openid
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/realms/test
+            user-name-attribute: preferred_username
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/test
+
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:url_shortener}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:Azi123!@#}
+  jpa:
+    open-in-view: false
+  liquibase:
+    change-log: classpath:liquibase/master.xml
+
+keycloak:
+    realm: test
+    admin-client:
+      base-url: http://localhost:8080
+      realm: master
+      client-id: admin-cli
+      username: admin
+      password: admin
+
+scheduler:
+  enable: false
+  fixed-delay: 120000
+  initial-delay: 5000
+  partner-ids:
+  expression: ${CRON:* * 23 ? * *}
